@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title id="pageTitle">Go play Gaming | بابل - المسيب - حي المعلمين</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                screens: { 'xs': '475px', 'sm': '640px', 'md': '768px', 'lg': '1024px', 'xl': '1280px' },
+                extend: {
+                    colors: {
+                        brand: { 50: '#fef2f2', 100: '#fee2e2', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d' },
+                        neon: { blue: '#00f0ff', purple: '#7000ff' }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Cairo', 'Tajawal', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; overflow-x: hidden; width: 100%; background-color: #12121e; color: #f3f4f6; }
+        
+        .glass-card {
+            background: rgba(28, 28, 42, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .light .glass-card {
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+
+        .product-card { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            position: relative;
+            background: #1a1a2e;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .light .product-card {
+            background: #ffffff;
+            border: 1px solid rgba(229, 231, 235, 1);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #374151; transition: .3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px;
+            background-color: white; transition: .3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #06b6d4; }
+        input:checked + .slider.slider-amber { background-color: #f59e0b; }
+        input:checked + .slider.slider-red { background-color: #dc2626; }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body id="top" class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 w-full glass-card border-b border-white/10 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-20">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <button onclick="toggleSidebarMenu()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-lg transition-all active:scale-95">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <button onclick="toggleSearchBox()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-lg transition-all active:scale-95">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="text-left">
+                        <h1 class="text-base sm:text-xl font-black tracking-tight text-white flex items-center justify-end gap-2">
+                            <span class="site-name-text">Go play Gaming</span>
+                            <span id="siteEstBadge" class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full font-bold border border-cyan-500/30">2024</span>
+                        </h1>
+                        <p class="text-[10px] text-cyan-400 font-semibold truncate flex items-center justify-end gap-1">
+                            <i class="fa-solid fa-location-dot"></i> <span class="site-address-text">بابل - المسيب - حي المعلمين</span>
+                        </p>
+                    </div>
+                    <div id="siteLogoHeaderContainer" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-slate-800 to-cyan-900 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-lg shadow-cyan-500/20 shrink-0 overflow-hidden">
+                        <i class="fa-solid fa-gamepad text-xl sm:text-2xl" id="siteLogoHeaderIcon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="searchBarContainer" class="hidden px-4 pb-3 pt-1 border-t border-white/10 bg-[#151522]/95 backdrop-blur-md">
+            <div class="relative max-w-2xl mx-auto">
+                <input type="text" id="searchInput" autocomplete="off" oninput="handleSearchInput(this.value)" placeholder="ابحث عن وجبة أو منتج..." class="w-full bg-[#1f1f35] text-white placeholder-gray-400 text-sm font-bold px-4 py-3 rounded-2xl border border-white/10 focus:outline-none focus:border-cyan-400 shadow-inner">
+                <button onclick="clearSearch()" class="absolute left-3 top-3.5 text-gray-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Menu Modal -->
+    <div id="sidebarMenuModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden transition-opacity" onclick="toggleSidebarMenu()">
+        <div class="absolute top-0 right-0 h-full w-80 max-w-full bg-[#181824] border-l border-white/10 shadow-2xl p-5 flex flex-col justify-between overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="space-y-6">
+                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                    <button onclick="toggleSidebarMenu()" class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-white/20"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    <div class="flex items-center gap-2">
+                        <span class="font-black text-white text-sm site-name-text">Go play Gaming</span>
+                        <div id="siteLogoSidebarContainer" class="w-9 h-9 rounded-xl bg-cyan-900/50 border border-cyan-500/40 flex items-center justify-center text-cyan-400 overflow-hidden">
+                            <i class="fa-solid fa-gamepad" id="siteLogoSidebarIcon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3" id="sidebarContactList"></div>
+
+                <button onclick="toggleTheme()" class="w-full py-3.5 px-4 rounded-2xl bg-[#22223b] hover:bg-[#2a2a48] text-white font-bold text-sm flex items-center justify-between border border-white/5 shadow-md">
+                    <i class="fa-solid fa-circle-half-stroke text-cyan-400 text-lg"></i><span id="sidebarThemeLabel">الوضع الداكن / الفاتح</span>
+                </button>
+            </div>
+            <div class="pt-4 border-t border-white/10 text-center text-xs text-gray-400">
+                <p>تم التصميم بواسطة <span class="text-white font-bold" id="sidebarDevName">حسين الصايغ</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-md"></div>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 w-full flex-grow space-y-6">
+        <div class="space-y-3">
+            <div class="flex items-center justify-between px-1">
+                <span id="firebaseStatus" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">متصل بالسحابة 🟢</span>
+                <h3 class="text-xs font-bold text-gray-400">الأقسام المتاحة</h3>
+            </div>
+            <div class="overflow-x-auto pb-2 pt-1 no-scrollbar">
+                <div id="categoriesContainer" class="flex items-center gap-3 whitespace-nowrap"></div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between px-1">
+            <h2 id="currentCategoryTitle" class="text-xl sm:text-2xl font-black text-white">الكل</h2>
+            <span id="productCountBadge" class="text-xs font-bold text-gray-400 bg-white/5 px-3 py-1 rounded-full border border-white/10">0 وجبة / منتج</span>
+        </div>
+
+        <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"></div>
+
+        <div id="noProductsMessage" class="hidden text-center py-16 bg-[#181824] rounded-3xl border border-white/10 my-6">
+            <i class="fa-solid fa-mug-hot text-4xl text-gray-500 mb-3"></i>
+            <h3 class="text-base font-bold text-gray-300">لا توجد منتجات أو أقسام مضافة حالياً. قم بإضافتها من لوحة التحكم!</h3>
+        </div>
+    </main>
+
+    <!-- زر الواتساب العائم -->
+    <a id="floatingWhatsappBtn" href="https://wa.me/9647722337379" target="_blank" class="fixed bottom-6 left-6 z-30 w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95 shadow-emerald-600/50">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Admin Login Modal -->
+    <div id="pinAuthModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-[#1a1a2a] w-full max-w-sm rounded-3xl shadow-2xl border border-white/10 p-6 text-center space-y-4 text-white">
+            <div class="w-12 h-12 mx-auto rounded-full bg-red-500/20 text-red-400 flex items-center justify-center text-2xl"><i class="fa-solid fa-user-lock"></i></div>
+            <h3 class="text-lg font-black">دخول الموظفين ولوحة التحكم</h3>
+            <form onsubmit="verifyAdminAuth(event)" class="space-y-3 text-right">
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1">اختر اسم المستخدم</label>
+                    <select id="adminUserSelect" required class="w-full text-center text-sm font-bold px-3 py-2.5 rounded-xl border border-white/10 bg-[#12121e] text-white"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1">رمز الدخول السرّي</label>
+                    <input type="password" id="adminPinInput" autocomplete="current-password" maxlength="20" required placeholder="أدخل كلمة المرور..." class="w-full text-center tracking-widest text-lg font-bold px-4 py-2.5 rounded-xl border border-white/10 bg-[#12121e] text-white">
+                </div>
+                <div class="flex gap-2 pt-1">
+                    <button type="submit" class="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs">تأكيد الدخول</button>
+                    <button type="button" onclick="closePinModal()" class="w-1/3 py-2.5 rounded-xl bg-gray-700 text-gray-200 font-bold text-xs">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Management Modal -->
+    <div id="adminModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-[#1a1a2a] w-full max-w-3xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden my-auto flex flex-col max-h-[90vh] text-white">
+            
+            <div class="bg-gradient-to-r from-red-700 via-rose-700 to-purple-800 px-6 py-4 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-xl"></i>
+                    <div>
+                        <h3 class="font-bold text-base">لوحة التحكم (<span id="currentUserBadge" class="text-amber-300 font-black"></span>)</h3>
+                        <p class="text-[10px] text-red-200">إدارة المنتجات، الأقسام، الموظفين، وأرقام التواصل</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="logoutAdmin()" class="text-xs bg-red-500/30 hover:bg-red-500/50 px-2.5 py-1 rounded-lg border border-red-400/30 text-white font-bold"><i class="fa-solid fa-right-from-bracket ml-1"></i> خروج</button>
+                    <button onclick="closeAdminModal()" class="text-white/80 hover:text-white p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+            </div>
+
+            <!-- تبويبات لوحة الإدارة -->
+            <div class="flex border-b border-white/10 bg-[#151522] px-3 pt-2 gap-1 overflow-x-auto shrink-0">
+                <button onclick="switchAdminTab('productsTab')" id="tabBtn-productsTab" class="admin-tab-btn px-3 py-2 text-xs font-bold rounded-t-xl transition-all border-b-2 border-brand-500 text-brand-400 bg-[#1a1a2a] flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-boxes-stacked"></i> المنتجات والأقسام</button>
+                <button onclick="switchAdminTab('siteTab')" id="tabBtn-siteTab" class="admin-tab-btn px-3 py-2 text-xs font-bold rounded-t-xl transition-all text-gray-400 hover:text-white flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-globe"></i> معلومات الموقع</button>
+                <button onclick="switchAdminTab('socialTab')" id="tabBtn-socialTab" class="admin-tab-btn px-3 py-2 text-xs font-bold rounded-t-xl transition-all text-gray-400 hover:text-white flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-share-nodes"></i> أرقام التواصل</button>
+                <button onclick="switchAdminTab('staffTab')" id="tabBtn-staffTab" class="admin-tab-btn px-3 py-2 text-xs font-bold rounded-t-xl transition-all text-gray-400 hover:text-white flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-users-gear text-blue-400"></i> إدارة الموظفين</button>
+                <button onclick="switchAdminTab('devTab')" id="tabBtn-devTab" class="admin-tab-btn px-3 py-2 text-xs font-bold rounded-t-xl transition-all text-gray-400 hover:text-white flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-lock text-purple-400"></i> المبرمج الرئيسي</button>
+                <button onclick="switchAdminTab('logsTab')" id="tabBtn-logsTab" class="admin-tab-btn hidden px-3 py-2 text-xs font-bold rounded-t-xl transition-all text-gray-400 hover:text-white flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-bell text-amber-400"></i> الإشعارات والسجل</button>
+                <button onclick="switchAdminTab('specialTab')" id="tabBtn-specialTab" class="admin-tab-btn hidden px-3 py-2 text-xs font-bold rounded-t-xl transition-all text-red-300 hover:text-white flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-user-secret text-red-400"></i> القسم الخاص</button>
+            </div>
+
+            <div class="p-5 overflow-y-auto space-y-5 flex-grow">
+                
+                <!-- المنتجات والأقسام -->
+                <div id="adminTab-productsTab" class="admin-tab-content space-y-5">
+                    
+                    <div id="sectionAllCatConfig" class="bg-gradient-to-r from-indigo-900/40 to-purple-900/40 p-4 rounded-2xl border border-indigo-500/30 space-y-3">
+                        <h4 class="font-bold text-sm flex items-center gap-1.5 text-indigo-300"><i class="fa-solid fa-image"></i> تخصيص أيقونة/صورة قسم "الكل"</h4>
+                        <div class="space-y-2">
+                            <input type="file" id="allCatFileInput" accept="image/*" onchange="handleAllCatFileSelect(event)" class="hidden">
+                            <input type="hidden" id="allCatImageData" value="">
+                            <div class="flex items-center gap-3">
+                                <button type="button" onclick="document.getElementById('allCatFileInput').click()" class="py-2 px-4 rounded-xl border border-dashed border-indigo-400 bg-indigo-500/10 text-indigo-200 font-bold text-xs flex items-center justify-center gap-2 hover:bg-indigo-500/20 transition-all">
+                                    <i class="fa-solid fa-upload"></i><span>اختيار صورة جديدة لزر الكل</span>
+                                </button>
+                                <button type="button" onclick="resetAllCatImage()" class="py-2 px-3 rounded-xl bg-red-500/20 text-red-300 hover:bg-red-500/30 font-bold text-xs">إعادة للوضع الافتراضي (أيقونة)</button>
+                            </div>
+                            <div id="allCatPreviewContainer" class="hidden flex items-center justify-between p-2 bg-[#12121e] rounded-xl border border-white/10 max-w-xs">
+                                <img id="allCatImagePreview" class="w-10 h-10 object-cover rounded-lg">
+                                <span class="text-xs text-indigo-400 font-bold">تم اختيار الصورة بنجاح ✓</span>
+                            </div>
+                        </div>
+                        <button type="button" onclick="saveAllCategoryCustomization()" class="w-full py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs">حفظ أيقونة قسم الكل</button>
+                    </div>
+
+                    <div id="sectionCatManager" class="bg-gray-800/60 p-4 rounded-2xl border border-white/10 space-y-3">
+                        <h4 class="font-bold text-sm flex items-center gap-1.5"><i class="fa-solid fa-folder-plus text-emerald-400"></i> <span id="catManagerTitle">إضافة قسم جديد (مع صورة)</span></h4>
+                        <input type="hidden" id="editingCategoryId" value="">
+                        <div class="space-y-2">
+                            <input type="text" id="newCategoryName" placeholder="اسم القسم (مثال: عصائر، موهيتو...)" class="w-full px-3.5 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs">
+                            <input type="file" id="catFileInput" accept="image/*" onchange="handleCatFileSelect(event)" class="hidden">
+                            <input type="hidden" id="catImageData" value="">
+                            <button type="button" onclick="document.getElementById('catFileInput').click()" class="w-full py-2 px-3 rounded-xl border border-dashed border-emerald-500 bg-emerald-500/10 text-emerald-300 font-bold text-xs flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-image"></i><span>اختيار صورة القسم</span>
+                            </button>
+                            <div id="catImagePreviewContainer" class="hidden flex items-center justify-between p-2 bg-[#12121e] rounded-xl border border-white/10">
+                                <img id="catImagePreview" class="w-8 h-8 object-cover rounded-lg">
+                                <span class="text-xs text-emerald-400 font-bold">تم اختيار صورة القسم ✓</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" id="saveCatBtn" onclick="saveCategory()" class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">إضافة القسم</button>
+                            <button type="button" id="cancelCatEditBtn" onclick="resetCategoryForm()" class="hidden w-1/3 py-2 rounded-xl bg-gray-700 text-gray-200 font-bold text-xs">إلغاء</button>
+                        </div>
+                        <div class="pt-2 border-t border-white/10">
+                            <h5 class="text-xs font-bold text-gray-300 mb-2">الأقسام الحالية (تعديل الاسم والصورة أو الحذف):</h5>
+                            <div id="adminCategoriesList" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                        </div>
+                    </div>
+
+                    <form id="productForm" onsubmit="handleProductSubmit(event)" class="space-y-3.5 border p-4 rounded-2xl border-white/10 bg-gray-800/30">
+                        <input type="hidden" id="editProductId" value="">
+                        <input type="hidden" id="prodImageData" value="">
+                        <h4 class="font-bold text-sm border-b border-white/10 pb-2 flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-brand-500"></i> إضافة منتج جديد</h4>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1">اسم المنتج</label>
+                            <input type="text" id="prodName" required class="w-full px-3.5 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs sm:text-sm">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-300 mb-1">القسم</label>
+                                <select id="prodCategory" required class="w-full px-3.5 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs font-bold"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-300 mb-1">السعر الأصلي (د.ع)</label>
+                                <input type="number" id="prodPrice" required min="0" step="250" class="w-full px-3.5 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-red-400 mb-1">سعر الخصم / العرض (اختياري)</label>
+                                <input type="number" id="prodDiscountPrice" min="0" step="250" placeholder="اتركه فارغاً إن لم يوجد" class="w-full px-3.5 py-2 rounded-xl border border-red-500/30 bg-[#12121e] text-red-400 text-xs font-bold">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                            <div class="p-3 bg-[#12121e] rounded-xl border border-white/10 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-star text-amber-400"></i>
+                                    <span class="text-xs font-bold text-gray-200">تمييز كـ (منتج جديد ⭐)</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="prodIsNewToggle">
+                                    <span class="slider slider-amber"></span>
+                                </label>
+                            </div>
+
+                            <div class="p-3 bg-[#12121e] rounded-xl border border-white/10 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-fire text-red-500"></i>
+                                    <span class="text-xs font-bold text-gray-200">تمييز كـ (عرض خاص 🔥)</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="prodIsSpecialToggle">
+                                    <span class="slider slider-red"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1">صورة المنتج</label>
+                            <input type="file" id="prodFileInput" accept="image/*" onchange="handleFileSelect(event)" class="hidden">
+                            <button type="button" onclick="document.getElementById('prodFileInput').click()" class="w-full py-2.5 px-4 rounded-xl border border-dashed border-cyan-500 bg-cyan-500/10 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up text-base"></i><span>اختيار صورة المنتج من الجهاز</span>
+                            </button>
+                            <div id="imagePreviewContainer" class="hidden mt-2 flex items-center justify-between p-2 bg-[#12121e] rounded-xl border border-white/10">
+                                <img id="imagePreview" class="w-10 h-10 object-cover rounded-lg">
+                                <span class="text-xs text-emerald-400 font-bold">تم اختيار الصورة ✓</span>
+                                <button type="button" onclick="clearImageSelection()" class="text-red-400 px-2"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1">وصف المنتج</label>
+                            <textarea id="prodDesc" rows="2" class="w-full px-3.5 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs"></textarea>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button type="submit" id="submitBtn" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs">حفظ المنتج</button>
+                            <button type="button" id="cancelEditBtn" onclick="resetForm()" class="hidden w-1/3 py-2.5 rounded-xl bg-gray-700 text-gray-200 font-bold text-xs">إلغاء</button>
+                        </div>
+                    </form>
+
+                    <div class="border-t border-white/10 pt-3">
+                        <h4 class="font-bold text-xs text-gray-300 mb-2.5">إدارة وتعديل المنتجات الحالية</h4>
+                        <div id="adminProductList" class="space-y-2 max-h-48 overflow-y-auto"></div>
+                    </div>
+                </div>
+
+                <!-- معلومات الموقع وشعار الموقع -->
+                <div id="adminTab-siteTab" class="admin-tab-content hidden space-y-4">
+                    <form onsubmit="saveSiteSettings(event)" class="space-y-3 bg-gray-800/40 p-4 rounded-2xl border border-white/10">
+                        <h4 class="font-bold text-sm border-b border-white/10 pb-2">تعديل معلومات الموقع وشعار الموقع</h4>
+                        
+                        <div class="space-y-2 bg-[#12121e] p-3 rounded-xl border border-cyan-500/30">
+                            <label class="block text-xs font-bold text-cyan-300 mb-1"><i class="fa-solid fa-image"></i> رفع شعار الموقع (يستبدل أيقونات الموقع تلقائياً)</label>
+                            <input type="file" id="siteLogoInput" accept="image/*" onchange="handleSiteLogoSelect(event)" class="hidden">
+                            <input type="hidden" id="siteLogoData" value="">
+                            <div class="flex items-center gap-3">
+                                <button type="button" onclick="document.getElementById('siteLogoInput').click()" class="py-2 px-4 rounded-xl border border-dashed border-cyan-400 bg-cyan-500/10 text-cyan-200 font-bold text-xs flex items-center justify-center gap-2 hover:bg-cyan-500/20 transition-all">
+                                    <i class="fa-solid fa-upload"></i><span>اختيار شعار جديد</span>
+                                </button>
+                                <button type="button" onclick="resetSiteLogo()" class="py-2 px-3 rounded-xl bg-red-500/20 text-red-300 hover:bg-red-500/30 font-bold text-xs">إعادة الأيقونة الافتراضية</button>
+                            </div>
+                            <div id="siteLogoPreviewContainer" class="hidden flex items-center justify-between p-2 bg-[#181824] rounded-xl border border-white/10 max-w-xs mt-2">
+                                <img id="siteLogoPreviewImg" class="w-10 h-10 object-cover rounded-lg">
+                                <span class="text-xs text-cyan-400 font-bold">تم اختيار الشعار ✓</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">اسم الكافيه / الموقع</label>
+                            <input type="text" id="settingSiteName" required class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">سنة التأسيس (مثال: 1999)</label>
+                            <input type="text" id="settingSiteEst" required class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">العنوان</label>
+                            <input type="text" id="settingSiteAddress" required class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-cyan-300 mb-1"><i class="fa-solid fa-map-location-dot"></i> رابط الموقع على الخريطة (Google Maps - اختياري)</label>
+                            <input type="url" id="settingMapLink" placeholder="https://maps.google.com/..." class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs" dir="ltr">
+                        </div>
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-brand-600 text-white font-bold text-xs">حفظ التغييرات</button>
+                    </form>
+                </div>
+
+                <!-- أرقام التواصل والواتساب -->
+                <div id="adminTab-socialTab" class="admin-tab-content hidden space-y-4">
+                    <div id="sectionSocialManager" class="bg-gray-800/40 p-4 rounded-2xl border border-white/10 space-y-4">
+                        <h4 class="font-bold text-sm border-b border-white/10 pb-2"><i class="fa-brands fa-whatsapp text-emerald-400"></i> إدارة أرقام الواتساب (تظهر تلقائياً في زر الواتساب والطلبات)</h4>
+                        <div id="addPhoneFormSection" class="flex gap-2">
+                            <input type="text" id="newPhoneInput" placeholder="رقم الهاتف (07722337379)" class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs" dir="ltr">
+                            <input type="text" id="newPhoneOwnerInput" placeholder="الاسم (حسين الصايغ)" class="w-1/2 px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs">
+                            <button type="button" onclick="addPhoneNumber()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shrink-0">إضافة رقم واتساب</button>
+                        </div>
+                        <div id="adminPhonesList" class="space-y-2 max-h-45 overflow-y-auto"></div>
+                    </div>
+
+                    <form onsubmit="saveSocialLinksSettings(event)" class="space-y-3 bg-gray-800/40 p-4 rounded-2xl border border-white/10">
+                        <h4 class="font-bold text-sm border-b border-white/10 pb-2">روابط حسابات التواصل الاجتماعي</h4>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">رابط إنستغرام</label>
+                            <input type="url" id="settingInstagram" class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs" dir="ltr">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">رابط فيسبوك</label>
+                            <input type="url" id="settingFacebook" class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs" dir="ltr">
+                        </div>
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs">حفظ الروابط</button>
+                    </form>
+                </div>
+
+                <!-- إدارة الموظفين -->
+                <div id="adminTab-staffTab" class="admin-tab-content hidden space-y-4">
+                    <div class="bg-gray-800/40 p-4 rounded-2xl border border-white/10 space-y-4">
+                        <h4 class="font-bold text-sm border-b border-white/10 pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-users-gear text-blue-400"></i> إدارة الموظفين وصلاحياتهم
+                        </h4>
+                        
+                        <input type="hidden" id="editingStaffName" value="">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-300 mb-1">اسم المستخدم / الموظف</label>
+                                <input type="text" id="newStaffName" placeholder="مثال: أحمد" class="w-full px-3.5 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-300 mb-1">رمز الدخول السري</label>
+                                <input type="password" autocomplete="new-password" id="newStaffPin" placeholder="كلمة المرور" class="w-full px-3.5 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs" dir="ltr">
+                            </div>
+                        </div>
+
+                        <!-- يظهر حصراً للمبرمج الرئيسي عند رفع/إضافة موظف جديد -->
+                        <div id="subDevToggleContainer" class="hidden items-center gap-4 bg-[#12121e] p-3 rounded-xl border border-purple-500/30">
+                            <label class="flex items-center gap-2 text-xs text-purple-300 font-bold cursor-pointer">
+                                <input type="checkbox" id="newStaffIsSubDev" onchange="toggleSubDevMode(this.checked)" class="w-4 h-4 rounded text-purple-600"> 
+                                تعيين كـ (مبرمج ثانوي) <span class="text-[10px] text-gray-400">(له صلاحية تعديل وحذف الموظفين، ولا يمكن تعديله إلا من المبرمج الرئيسي)</span>
+                            </label>
+                        </div>
+
+                        <div id="staffPermissionsContainer" class="p-3 bg-[#12121e] rounded-xl border border-white/10 space-y-2">
+                            <span class="text-xs font-bold text-cyan-300 block mb-1">الصلاحيات المسموحة لهذا الموظف:</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                                    <input type="checkbox" id="perm_products" class="w-4 h-4 rounded text-cyan-600" checked> إضافة وتعديل المنتجات
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                                    <input type="checkbox" id="perm_categories" class="w-4 h-4 rounded text-cyan-600" checked> إضافة وتعديل الأقسام
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                                    <input type="checkbox" id="perm_site" class="w-4 h-4 rounded text-cyan-600"> تعديل معلومات الموقع الأساسية
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                                    <input type="checkbox" id="perm_social" class="w-4 h-4 rounded text-cyan-600"> تعديل أرقام التواصل وروابط التواصل
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button type="button" onclick="saveStaffMember()" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs">حفظ المستخدم / الموظف</button>
+                            <button type="button" id="cancelStaffEditBtn" onclick="resetStaffForm()" class="hidden w-1/3 py-2.5 rounded-xl bg-gray-700 text-gray-200 font-bold text-xs">إلغاء</button>
+                        </div>
+
+                        <div class="pt-3 border-t border-white/10">
+                            <h5 class="text-xs font-bold text-gray-300 mb-2">الموظفون والمبرمجون المسجلون:</h5>
+                            <div id="adminStaffList" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المبرمج الرئيسي -->
+                <div id="adminTab-devTab" class="admin-tab-content hidden space-y-4">
+                    <form onsubmit="saveDevSettings(event)" id="devSettingsForm" class="space-y-3 bg-gray-800/40 p-4 rounded-2xl border border-purple-500/30">
+                        <h4 class="font-bold text-sm border-b border-white/10 pb-2 flex items-center justify-between">
+                            <span>إعدادات ومعلومات المبرمج الرئيسي</span>
+                            <span id="devTabNotice" class="text-[10px] text-amber-400"></span>
+                        </h4>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">اسم المبرمج</label>
+                            <input type="text" id="settingDevName" required class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">رقم هاتف المبرمج</label>
+                            <input type="text" id="settingDevPhone" required class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs" dir="ltr">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">يوزر إنستغرام المبرمج (أو الرابط)</label>
+                            <input type="text" id="settingDevInstagram" placeholder="مثال: xv8f" class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs" dir="ltr">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">رابط اسم المبرمج عند الضغط عليه (اختياري)</label>
+                            <input type="url" id="settingDevLink" placeholder="https://..." class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs" dir="ltr">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-amber-300 mb-1"><i class="fa-solid fa-copyright"></i> نص حقوق النشر والتأليف أسفل الموقع</label>
+                            <input type="text" id="settingCopyrightText" placeholder="جميع الحقوق محفوظة © 2026 Go play Gaming" class="w-full px-3 py-2 rounded-xl border border-white/10 bg-[#12121e] text-white text-xs">
+                        </div>
+                        <button type="submit" id="saveDevBtn" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs">حفظ معلومات المبرمج الرئيسي</button>
+                    </form>
+                </div>
+
+                <!-- الإشعارات والسجل -->
+                <div id="adminTab-logsTab" class="admin-tab-content hidden space-y-4">
+                    <div class="bg-gray-800/40 p-4 rounded-2xl border border-amber-500/30 space-y-3">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <h4 class="font-bold text-sm text-amber-300 flex items-center gap-1.5"><i class="fa-solid fa-bell"></i> سجل الأنشطة والإشعارات</h4>
+                            <!-- زر مسح السجل يظهر فقط للمبرمج الرئيسي حصراً -->
+                            <button type="button" id="clearLogsBtn" onclick="clearActivityLogs()" class="hidden text-[10px] bg-red-500/20 text-red-300 hover:bg-red-500/30 px-2 py-1 rounded-lg font-bold">مسح السجل</button>
+                        </div>
+                        <div id="adminLogsList" class="space-y-2 max-h-64 overflow-y-auto"></div>
+                    </div>
+                </div>
+
+                <!-- القسم الخاص (يظهر حصراً للمبرمج الرئيسي فقط) -->
+                <div id="adminTab-specialTab" class="admin-tab-content hidden space-y-4">
+                    <div class="bg-gradient-to-r from-red-950/60 to-purple-950/60 p-5 rounded-3xl border border-red-500/40 space-y-4 shadow-xl">
+                        <h4 class="font-black text-base text-red-300 flex items-center gap-2 border-b border-red-500/30 pb-3">
+                            <i class="fa-solid fa-user-secret text-red-400"></i> القسم الخاص - التحكم بررمز الدخول الشامل
+                        </h4>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            هذا القسم سري ولا يظهر لأي موظف أو مبرمج ثانوي. هنا يمكنك تعديل رمز الدخول الشامل الخاص بك (Universal Pin) والذي يستخدم للدخول كـ مبرمج رئيسي بأي وقت.
+                        </p>
+                        <form onsubmit="saveUniversalPinSettings(event)" class="space-y-3 pt-2">
+                            <div>
+                                <label class="block text-xs font-bold text-red-300 mb-1">رمز الدخول الشامل الجديد</label>
+                                <input type="password" id="newUniversalPinInput" required placeholder="أدخل رمز الدخول الشامل الجديد..." class="w-full px-4 py-3 rounded-xl border border-red-500/30 bg-[#12121e] text-white text-sm tracking-widest font-bold" dir="ltr">
+                            </div>
+                            <button type="submit" class="w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-lg shadow-red-600/30 transition-all">تحديث وحفظ رمز الدخول الشامل</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#0e0e17] text-white border-t border-white/10 py-6 mt-auto text-center space-y-3">
+        <div class="flex items-center justify-center gap-2 font-black text-cyan-400">
+            <i class="fa-solid fa-gamepad"></i><span class="site-name-text">Go play Gaming</span>
+        </div>
+        <p class="text-xs text-gray-400">العنوان: <span class="site-address-text">بابل - المسيب - حي المعلمين</span></p>
+        
+        <div class="pt-1">
+            <button onclick="promptAdminPin()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#22223b] hover:bg-[#2a2a48] text-amber-400 font-bold text-xs border border-amber-500/30 transition-all shadow-md active:scale-95">
+                <i class="fa-solid fa-user-lock"></i><span>حساب المستخدم / الإدارة</span>
+            </button>
+        </div>
+
+        <div class="pt-2 text-[11px] text-gray-400 flex items-center justify-center gap-2 flex-wrap border-t border-white/5 max-w-lg mx-auto">
+            <span>تم التصميم بواسطة <span id="devNameContainer"></span></span> | 
+            <span>هاتف: <a id="devPhoneDisplay" href="tel:07722337379" class="text-cyan-400 underline" dir="ltr">07722337379</a></span> | 
+            <span id="devInstagramWrapper" class="hidden items-center gap-1">
+                <i class="fa-brands fa-instagram text-rose-400"></i>
+                <a id="devInstagramDisplay" href="#" target="_blank" class="text-rose-400 font-bold underline" dir="ltr">يوزر المبرمج</a>
+            </span>
+        </div>
+
+        <div class="pt-2 text-[10px] text-gray-400 border-t border-white/5">
+            <p id="footerCopyrightDisplay">جميع الحقوق محفوظة © 2026 Go play Gaming</p>
+        </div>
+    </footer>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAyZpUJAL-2n9bktHxMXl_bzwEe0b5LxHs",
+            authDomain: "goplay-bf4bb.firebaseapp.com",
+            databaseURL: "https://goplay-bf4bb-default-rtdb.firebaseio.com",
+            projectId: "goplay-bf4bb",
+            storageBucket: "goplay-bf4bb.firebasestorage.app",
+            messagingSenderId: "520158739948",
+            appId: "1:520158739948:web:601709b973137c91c594c9",
+            measurementId: "G-5SFM947LEC"
+        };
+
+        let database = null;
+        let isFirebaseActive = false;
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            isFirebaseActive = true;
+            document.getElementById('firebaseStatus').textContent = 'متصل بالسحابة 🟢';
+        } catch(e) {
+            console.error("Firebase Initialization Error:", e);
+        }
+
+        const MASTER_PIN_CODE = "1962";
+        let universalDevPin = "19622007";
+        
+        let authorizedUsersList = {
+            "مبرمج الموقع": { 
+                pin: "1962", 
+                isMaster: true, 
+                isSubDev: false,
+                permissions: { products: true, categories: true, site: true, social: true, staff: true, dev: true } 
+            }
+        };
+
+        let activityLogs = [];
+        let loggedInUser = null;
+        let isAdminAuthenticated = false;
+        let isUniversalMasterLogin = false;
+
+        let products = [];
+        let categoriesList = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        let siteConfig = {
+            siteName: "Go play Gaming",
+            siteEst: "2024",
+            siteAddress: "بابل - المسيب - حي المعلمين",
+            mapLink: "",
+            siteLogo: "",
+            allCatImage: "",
+            phonesList: [{ id: 'p1', number: '07722337379', owner: 'حسين الصايغ' }],
+            instagram: "",
+            facebook: "",
+            devName: "حسين الصايغ",
+            devPhone: "07722337379",
+            devInstagram: "xv8f",
+            devLink: "",
+            copyrightText: "جميع الحقوق محفوظة © 2026 Go play Gaming"
+        };
+
+        function logActivity(actionText) {
+            if(!loggedInUser) return;
+            const newLog = {
+                id: 'log_' + Date.now(),
+                user: loggedInUser,
+                isMasterLog: (loggedInUser === "مبرمج الموقع" || isUniversalMasterLogin),
+                text: actionText,
+                time: new Date().toLocaleString('ar-IQ')
+            };
+            
+            activityLogs.unshift(newLog);
+            if(activityLogs.length > 50) activityLogs.pop();
+
+            if(isFirebaseActive) {
+                database.ref('activityLogs').set(activityLogs);
+            } else {
+                localStorage.setItem('goplay_activity_logs', JSON.stringify(activityLogs));
+            }
+        }
+
+        function initLogs() {
+            if(isFirebaseActive) {
+                database.ref('activityLogs').on('value', (snap) => {
+                    activityLogs = snap.val() ? Object.values(snap.val()) : [];
+                    renderAdminLogsList();
+                });
+            } else {
+                activityLogs = JSON.parse(localStorage.getItem('goplay_activity_logs') || '[]');
+                renderAdminLogsList();
+            }
+        }
+
+        function clearActivityLogs() {
+            const userData = authorizedUsersList[loggedInUser] || {};
+            const hasMasterPowers = userData.isMaster || isUniversalMasterLogin;
+            
+            // صلاحية حذف سجل الإشعارات مقتصرة حصراً على المبرمج الرئيسي فقط
+            if(!hasMasterPowers) {
+                showToast('عذراً، صلاحية مسح وتفريغ سجل الإشعارات مخصصة للمبرمج الرئيسي فقط!');
+                return;
+            }
+
+            activityLogs = [];
+            if(isFirebaseActive) database.ref('activityLogs').set(null);
+            else localStorage.removeItem('goplay_activity_logs');
+            renderAdminLogsList();
+            showToast('تم مسح السجل بنجاح');
+        }
+
+        function renderAdminLogsList() {
+            const listEl = document.getElementById('adminLogsList');
+            const clearBtn = document.getElementById('clearLogsBtn');
+            if(!listEl) return;
+            
+            const userData = authorizedUsersList[loggedInUser] || {};
+            const isMainMaster = userData.isMaster || isUniversalMasterLogin;
+            
+            // زر مسح السجل يظهر حصراً للمبرمج الرئيسي فقط
+            if(clearBtn) {
+                if(isMainMaster) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+            }
+
+            let displayedLogs = activityLogs;
+            if(!isMainMaster) {
+                displayedLogs = activityLogs.filter(log => !log.isMasterLog);
+            }
+
+            listEl.innerHTML = displayedLogs.length === 0 ? '<p class="text-xs text-gray-400">لا توجد إشعارات أو نشاطات مسجلة حالياً</p>' : '';
+            displayedLogs.forEach(l => {
+                listEl.innerHTML += `
+                    <div class="p-2.5 bg-[#12121e] rounded-xl text-xs border border-white/10 flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-amber-400">[${l.user}]</span> <span class="text-white mr-1">${l.text}</span>
+                        </div>
+                        <span class="text-[10px] text-gray-400" dir="ltr">${l.time}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function formatIQD(price) { return new Intl.NumberFormat('ar-IQ').format(price) + ' د.ع'; }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('goplay_theme') || 'dark';
+            if (savedTheme === 'light') { document.documentElement.classList.remove('dark'); document.documentElement.classList.add('light'); updateThemeUI(false); } 
+            else { document.documentElement.classList.add('dark'); document.documentElement.classList.remove('light'); updateThemeUI(true); }
+        }
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark'); document.documentElement.classList.add('light');
+                localStorage.setItem('goplay_theme', 'light'); updateThemeUI(false);
+            } else {
+                document.documentElement.classList.remove('light'); document.documentElement.classList.add('dark');
+                localStorage.setItem('goplay_theme', 'dark'); updateThemeUI(true);
+            }
+        }
+        function updateThemeUI(isDark) {
+            const label = document.getElementById('sidebarThemeLabel');
+            if(label) label.textContent = isDark ? 'الوضع النهاري' : 'الوضع الداكن';
+        }
+
+        function toggleSidebarMenu() { document.getElementById('sidebarMenuModal').classList.toggle('hidden'); }
+        function toggleSearchBox() {
+            const bar = document.getElementById('searchBarContainer');
+            bar.classList.toggle('hidden');
+            if(!bar.classList.contains('hidden')) document.getElementById('searchInput').focus();
+        }
+        function handleSearchInput(val) { searchQuery = val.trim().toLowerCase(); renderProducts(); }
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            renderProducts();
+            document.getElementById('searchBarContainer').classList.add('hidden');
+        }
+
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('border-b-2', 'border-brand-500', 'text-brand-400', 'bg-[#1a1a2a]');
+                btn.classList.add('text-gray-400');
+            });
+            document.getElementById('adminTab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('tabBtn-' + tabId);
+            activeBtn.classList.add('border-b-2', 'border-brand-500', 'text-brand-400', 'bg-[#1a1a2a]');
+            activeBtn.classList.remove('text-gray-400');
+        }
+
+        function initSiteSettings() {
+            if(isFirebaseActive) {
+                database.ref('siteConfig').on('value', (snap) => {
+                    if(snap.val()) { siteConfig = { ...siteConfig, ...snap.val() }; applySiteSettings(); }
+                });
+                database.ref('universalPin').on('value', (snap) => {
+                    if(snap.val()) { universalDevPin = snap.val(); }
+                });
+                database.ref('authorizedUsers').on('value', (snap) => {
+                    if(snap.val()) { authorizedUsersList = snap.val(); }
+                    authorizedUsersList["مبرمج الموقع"] = { pin: MASTER_PIN_CODE, isMaster: true, isSubDev: false, permissions: { products: true, categories: true, site: true, social: true, staff: true, dev: true } };
+                });
+            } else {
+                const s = localStorage.getItem('goplay_site_config');
+                if(s) { siteConfig = { ...siteConfig, ...JSON.parse(s) }; }
+                const up = localStorage.getItem('goplay_universal_pin');
+                if(up) { universalDevPin = up; }
+                const u = localStorage.getItem('goplay_authorized_users');
+                if(u) { authorizedUsersList = JSON.parse(u); }
+                authorizedUsersList["مبرمج الموقع"] = { pin: MASTER_PIN_CODE, isMaster: true, isSubDev: false, permissions: { products: true, categories: true, site: true, social: true, staff: true, dev: true } };
+                applySiteSettings();
+            }
+        }
+
+        function saveUniversalPinSettings(e) {
+            e.preventDefault();
+            const userData = authorizedUsersList[loggedInUser] || {};
+            const hasMasterPowers = userData.isMaster || isUniversalMasterLogin;
+            if(!hasMasterPowers) {
+                showToast('عذراً، تغيير رمز الدخول الشامل مخصص للمبرمج الرئيسي فقط!');
+                return;
+            }
+
+            const newPin = document.getElementById('newUniversalPinInput').value.trim();
+            if(!newPin) { showToast('يرجى إدخال الرمز الجديد'); return; }
+
+            universalDevPin = newPin;
+            if(isFirebaseActive) {
+                database.ref('universalPin').set(newPin);
+            } else {
+                localStorage.setItem('goplay_universal_pin', newPin);
+            }
+
+            document.getElementById('newUniversalPinInput').value = '';
+            showToast('تم تحديث رمز الدخول الشامل بنجاح');
+            logActivity('قام بتغيير رمز الدخول الشامل من القسم الخاص');
+        }
+
+        function applySiteSettings() {
+            document.querySelectorAll('.site-name-text').forEach(el => el.textContent = siteConfig.siteName);
+            document.querySelectorAll('.site-address-text').forEach(el => el.textContent = siteConfig.siteAddress);
+            document.getElementById('siteEstBadge').textContent = siteConfig.siteEst || '2024';
+            document.getElementById('pageTitle').textContent = siteConfig.siteName + " | " + siteConfig.siteAddress;
+            document.getElementById('sidebarDevName').textContent = siteConfig.devName;
+            document.getElementById('footerCopyrightDisplay').textContent = siteConfig.copyrightText || "جميع الحقوق محفوظة © 2026 Go play Gaming";
+
+            const headerContainer = document.getElementById('siteLogoHeaderContainer');
+            const sidebarContainer = document.getElementById('siteLogoSidebarContainer');
+
+            if(siteConfig.siteLogo && siteConfig.siteLogo.trim() !== '') {
+                headerContainer.innerHTML = `<img src="${siteConfig.siteLogo}" class="w-full h-full object-cover">`;
+                sidebarContainer.innerHTML = `<img src="${siteConfig.siteLogo}" class="w-full h-full object-cover">`;
+            } else {
+                headerContainer.innerHTML = `<i class="fa-solid fa-gamepad text-xl sm:text-2xl" id="siteLogoHeaderIcon"></i>`;
+                sidebarContainer.innerHTML = `<i class="fa-solid fa-gamepad" id="siteLogoSidebarIcon"></i>`;
+            }
+            
+            const devNameContainer = document.getElementById('devNameContainer');
+            if(siteConfig.devLink && siteConfig.devLink.trim() !== '') {
+                devNameContainer.innerHTML = `<a href="${siteConfig.devLink}" target="_blank" class="text-white font-bold underline hover:text-cyan-400">${siteConfig.devName}</a>`;
+            } else {
+                devNameContainer.innerHTML = `<span class="font-bold text-white">${siteConfig.devName}</span>`;
+            }
+
+            document.getElementById('devPhoneDisplay').textContent = siteConfig.devPhone;
+            document.getElementById('devPhoneDisplay').href = "tel:" + siteConfig.devPhone;
+
+            const instVal = siteConfig.devInstagram || '';
+            const instWrapper = document.getElementById('devInstagramWrapper');
+            const instDisplay = document.getElementById('devInstagramDisplay');
+            if(instVal.trim() !== '') {
+                instWrapper.classList.remove('hidden');
+                instWrapper.classList.add('inline-flex');
+                instDisplay.textContent = instVal.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '');
+                instDisplay.href = instVal.startsWith('http') ? instVal : `https://instagram.com/${instVal.replace(/^@/, '')}`;
+            } else {
+                instWrapper.classList.add('hidden');
+                instWrapper.classList.remove('inline-flex');
+            }
+
+            const phones = siteConfig.phonesList && siteConfig.phonesList.length > 0 ? siteConfig.phonesList : [{ number: '07722337379', owner: 'حسين الصايغ' }];
+            const primaryPhone = phones[0].number;
+            const cleanNum = primaryPhone.replace(/[^0-9]/g, '');
+            const intlNum = cleanNum.startsWith('0') ? '964' + cleanNum.substring(1) : cleanNum;
+            document.getElementById('floatingWhatsappBtn').href = `https://wa.me/${intlNum}`;
+
+            const sidebarContactList = document.getElementById('sidebarContactList');
+            let sidebarHtml = '';
+            phones.forEach(p => {
+                const pClean = p.number.replace(/[^0-9]/g, '');
+                const pIntl = pClean.startsWith('0') ? '964' + pClean.substring(1) : pClean;
+                sidebarHtml += `
+                    <div class="p-3 rounded-2xl bg-[#22223b] border border-white/5 space-y-2">
+                        <div class="flex items-center justify-between text-white text-sm font-bold">
+                            <span class="text-emerald-400"><i class="fa-brands fa-whatsapp ml-1"></i> ${p.number}</span>
+                            <span class="text-xs text-gray-300">${p.owner || ''}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="tel:${p.number}" class="w-full py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs text-center"><i class="fa-solid fa-phone-flip ml-1"></i> اتصال</a>
+                            <a href="https://wa.me/${pIntl}" target="_blank" class="w-full py-1.5 rounded-xl bg-green-600 hover:bg-green-500 text-white font-bold text-xs text-center"><i class="fa-brands fa-whatsapp ml-1"></i> واتساب</a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if(siteConfig.instagram && siteConfig.instagram.trim() !== '') {
+                sidebarHtml += `<a href="${siteConfig.instagram}" target="_blank" class="w-full py-3 px-4 rounded-2xl bg-[#22223b] hover:bg-[#2a2a48] text-white font-bold text-sm flex items-center justify-between border border-white/5 shadow-md"><i class="fa-brands fa-instagram text-rose-400 text-lg"></i><span>إنستغرام</span></a>`;
+            }
+            if(siteConfig.facebook && siteConfig.facebook.trim() !== '') {
+                sidebarHtml += `<a href="${siteConfig.facebook}" target="_blank" class="w-full py-3 px-4 rounded-2xl bg-[#22223b] hover:bg-[#2a2a48] text-white font-bold text-sm flex items-center justify-between border border-white/5 shadow-md"><i class="fa-brands fa-facebook text-blue-400 text-lg"></i><span>فيسبوك</span></a>`;
+            }
+            if(siteConfig.mapLink && siteConfig.mapLink.trim() !== '') {
+                sidebarHtml += `<a href="${siteConfig.mapLink}" target="_blank" class="w-full py-3 px-4 rounded-2xl bg-[#22223b] hover:bg-[#2a2a48] text-white font-bold text-sm flex items-center justify-between border border-white/5 shadow-md"><i class="fa-solid fa-map-location-dot text-cyan-400 text-lg"></i><span>موقعنا على الخريطة</span></a>`;
+            }
+
+            sidebarContactList.innerHTML = sidebarHtml;
+
+            document.getElementById('settingSiteName').value = siteConfig.siteName;
+            document.getElementById('settingSiteEst').value = siteConfig.siteEst || '2024';
+            document.getElementById('settingSiteAddress').value = siteConfig.siteAddress;
+            document.getElementById('settingMapLink').value = siteConfig.mapLink || '';
+            document.getElementById('settingInstagram').value = siteConfig.instagram || '';
+            document.getElementById('settingFacebook').value = siteConfig.facebook || '';
+            document.getElementById('settingDevName').value = siteConfig.devName;
+            document.getElementById('settingDevPhone').value = siteConfig.devPhone;
+            document.getElementById('settingDevInstagram').value = siteConfig.devInstagram || '';
+            document.getElementById('settingDevLink').value = siteConfig.devLink || '';
+            document.getElementById('settingCopyrightText').value = siteConfig.copyrightText || "جميع الحقوق محفوظة © 2026 Go play Gaming";
+
+            renderAdminPhonesList();
+            renderAdminStaffList();
+            renderCategoriesUI();
+            renderProducts();
+        }
+
+        function handleSiteLogoSelect(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('siteLogoData').value = event.target.result;
+                document.getElementById('siteLogoPreviewImg').src = event.target.result;
+                document.getElementById('siteLogoPreviewContainer').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetSiteLogo() {
+            siteConfig.siteLogo = "";
+            document.getElementById('siteLogoData').value = "";
+            document.getElementById('siteLogoPreviewContainer').classList.add('hidden');
+            saveConfig('تمت إعادة أيقونة الموقع الافتراضية');
+            logActivity('قام بإعادة شعار الموقع للوضع الافتراضي');
+        }
+
+        function handleAllCatFileSelect(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('allCatImageData').value = event.target.result;
+                document.getElementById('allCatImagePreview').src = event.target.result;
+                document.getElementById('allCatPreviewContainer').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveAllCategoryCustomization() {
+            const imgData = document.getElementById('allCatImageData').value;
+            if(!imgData) { showToast('يرجى اختيار صورة أولاً'); return; }
+            siteConfig.allCatImage = imgData;
+            saveConfig('تم تحديث أيقونة قسم الكل بنجاح');
+            document.getElementById('allCatPreviewContainer').classList.add('hidden');
+            document.getElementById('allCatImageData').value = '';
+            logActivity('قام بتحديث أيقونة قسم الكل');
+        }
+
+        function resetAllCatImage() {
+            siteConfig.allCatImage = "";
+            saveConfig('تمت إعادة زر الكل للوضع الافتراضي');
+            document.getElementById('allCatPreviewContainer').classList.add('hidden');
+            document.getElementById('allCatImageData').value = '';
+            logActivity('قام بإعادة زر الكل للوضع الافتراضي');
+        }
+
+        function addPhoneNumber() {
+            const userData = authorizedUsersList[loggedInUser] || {};
+            const hasMasterOrSub = userData.isMaster || userData.isSubDev || isUniversalMasterLogin;
+            if(!hasMasterOrSub) {
+                showToast('عذراً، إضافة أرقام الواتساب مخصصة للمبرمج الرئيسي والمبرمج الثانوي فقط!');
+                return;
+            }
+
+            const num = document.getElementById('newPhoneInput').value.trim();
+            const owner = document.getElementById('newPhoneOwnerInput').value.trim();
+            if(!num) { showToast('يرجى كتابة رقم الهاتف'); return; }
+
+            if(!siteConfig.phonesList) siteConfig.phonesList = [];
+            siteConfig.phonesList.push({ id: 'ph_' + Date.now(), number: num, owner: owner });
+
+            document.getElementById('newPhoneInput').value = '';
+            document.getElementById('newPhoneOwnerInput').value = '';
+            saveConfig('تمت إضافة رقم الواتساب وتحديثه بنجاح');
+            logActivity(`قام بإضافة رقم واتساب جديد (${num})`);
+        }
+
+        function deletePhoneNumber(id) {
+            const userData = authorizedUsersList[loggedInUser] || {};
+            const hasMasterOrSub = userData.isMaster || userData.isSubDev || isUniversalMasterLogin;
+            if(!hasMasterOrSub) {
+                showToast('عذراً، حذف أرقام الواتساب مخصص للمبرمج الرئيسي والمبرمج الثانوي فقط!');
+                return;
+            }
+
+            siteConfig.phonesList = siteConfig.phonesList.filter(p => p.id !== id);
+            saveConfig('تم حذف رقم الواتساب');
+            logActivity('قام بحذف رقم واتساب');
+        }
+
+        function renderAdminPhonesList() {
+            const container = document.getElementById('adminPhonesList');
+            if(!container) return;
+            
+            const userData = authorizedUsersList[loggedInUser] || {};
+            const hasMasterOrSub = userData.isMaster || userData.isSubDev || isUniversalMasterLogin;
+            
+            const addFormSec = document.getElementById('addPhoneFormSection');
+            if(addFormSec) {
+                addFormSec.style.display = hasMasterOrSub ? 'flex' : 'none';
+            }
+
+            const phones = siteConfig.phonesList || [];
+            container.innerHTML = phones.length === 0 ? '<p class="text-xs text-gray-400">لا توجد أرقام مضافة</p>' : '';
+            phones.forEach(p => {
+                let deleteBtnHtml = hasMasterOrSub ? `<button type="button" onclick="deletePhoneNumber('${p.id}')" class="text-red-400 hover:text-red-300 font-bold px-2">حذف</button>` : '<span class="text-[10px] text-gray-500">للمبرمجين فقط</span>';
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-2 bg-[#12121e] rounded-xl text-xs border border-white/10">
+                        <div><span class="font-bold text-emerald-400" dir="ltr"><i class="fa-brands fa-whatsapp"></i> ${p.number}</span> <span class="text-gray-300 mr-2">(${p.owner || 'بدون اسم'})</span></div>
+                        ${deleteBtnHtml}
+                    </div>
+                `;
+            });
+        }
+
+        function toggleSubDevMode(isSub) {
+            const permContainer = document.getElementById('staffPermissionsContainer');
+            if(isSub) {
+                permContainer.style.opacity = '0.4';
+                permContainer.style.pointerEvents = 'none';
+            } else {
+                permContainer.style.opacity = '1';
+                permContainer.style.pointerEvents = 'auto';
+            }
+        }
+
+        function saveStaffMember() {
+            const name = document.getElementById('newStaffName').value.trim();
+            const pin = document.getElementById('newStaffPin').value.trim();
+            const subDevToggle = document.getElementById('newStaffIsSubDev');
+            const currentUserData = authorizedUsersList[loggedInUser] || {};
+            
+            const isSubDev = ((currentUserData.isMaster || isUniversalMasterLogin) && subDevToggle) ? subDevToggle.checked : false;
+            const editingName = document.getElementById('editingStaffName').value;
+
+            if(!name || !pin) { showToast('يرجى إدخال اسم المستخدم وكلمة المرور'); return; }
+            if(name === "مبرمج الموقع") { showToast('لا يمكن التعديل على يوزر المبرمج الرئيسي من هنا'); return; }
+
+            if(name.toLowerCase().includes("مبرمج ثانوي") && !isSubDev) {
+                showToast('عذراً، هذا المسمى (مبرمج ثانوي) محجوز ولا يمكن استخدامه لأسماء الحسابات العادية!');
+                return;
+            }
+
+            if(editingName && authorizedUsersList[editingName] && authorizedUsersList[editingName].isSubDev && !currentUserData.isMaster && !isUniversalMasterLogin) {
+                showToast('عذراً، المبرمج الثانوي لا يمكنه تعديل مبرمج ثانوي آخر!');
+                return;
+            }
+
+            let permissions = { products: true, categories: true, site: false, social: false, staff: false, dev: false };
+
+            if(isSubDev) {
+                permissions = { products: true, categories: true, site: true, social: true, staff: true, dev: false };
+            } else {
+                permissions = {
+                    products: document.getElementById('perm_products').checked,
+                    categories: document.getElementById('perm_categories').checked,
+                    site: document.getElementById('perm_site').checked,
+                    social: document.getElementById('perm_social').checked,
+                    staff: false,
+                    dev: false
+                };
+            }
+
+            if(editingName && editingName !== name) {
+                delete authorizedUsersList[editingName];
+            }
+
+            authorizedUsersList[name] = { 
+                pin: pin, 
+                isMaster: false, 
+                isSubDev: isSubDev, 
+                permissions: permissions 
+            };
+            
+            if(isFirebaseActive) {
+                database.ref('authorizedUsers').set(authorizedUsersList);
+            }
+            localStorage.setItem('goplay_authorized_users', JSON.stringify(authorizedUsersList));
+
+            resetStaffForm();
+            renderAdminStaffList();
+            showToast(`تم حفظ المستخدم (${name}) بنجاح`);
+            logActivity(`قام بإضافة أو تعديل حساب المستخدم (${name})`);
+        }
+
+        function editStaffMember(name) {
+            if(name === "مبرمج الموقع") return;
+            const data = authorizedUsersList[name];
+            const currentUserData = authorizedUsersList[loggedInUser] || {};
+
+            if(currentUserData.isSubDev && !isUniversalMasterLogin && (data.isMaster || data.isSubDev)) {
+                showToast('عذراً، لا يمكن للمبرمج الثانوي تعديل مبرمج آخر!');
+                return;
+            }
+
+            if(!data) return;
+
+            document.getElementById('editingStaffName').value = name;
+            document.getElementById('newStaffName').value = name;
+            document.getElementById('newStaffPin').value = data.pin;
+            
+            const subDevToggle = document.getElementById('newStaffIsSubDev');
+            if(subDevToggle) {
+                subDevToggle.checked = !!data.isSubDev;
+                toggleSubDevMode(!!data.isSubDev);
+            }
+
+            if(!data.isSubDev && data.permissions) {
+                document.getElementById('perm_products').checked = !!data.permissions.products;
+                document.getElementById('perm_categories').checked = !!data.permissions.categories;
+                document.getElementById('perm_site').checked = !!data.permissions.site;
+                document.getElementById('perm_social').checked = !!data.permissions.social;
+            }
+
+            document.getElementById('cancelStaffEditBtn').classList.remove('hidden');
+        }
+
+        function resetStaffForm() {
+            document.getElementById('editingStaffName').value = '';
+            document.getElementById('newStaffName').value = '';
+            document.getElementById('newStaffPin').value = '';
+            const subDevToggle = document.getElementById('newStaffIsSubDev');
+            if(subDevToggle) {
+                subDevToggle.checked = false;
+                toggleSubDevMode(false);
+            }
+            document.getElementById('cancelStaffEditBtn').classList.add('hidden');
+        }
+
+        function deleteStaffMember(name) {
+            if(name === "مبرمج الموقع") { showToast('لا يمكن حذف المبرمج الرئيسي!'); return; }
+            const targetData = authorizedUsersList[name];
+            const currentUserData = authorizedUsersList[loggedInUser] || {};
+
+            if(currentUserData.isSubDev && !isUniversalMasterLogin && (targetData.isMaster || targetData.isSubDev)) {
+                showToast('عذراً، لا يمكن للمبرمج الثانوي حذف مبرمج آخر!');
+                return;
+            }
+
+            delete authorizedUsersList[name];
+
+            if(isFirebaseActive) {
+                database.ref('authorizedUsers').set(authorizedUsersList);
+            }
+            localStorage.setItem('goplay_authorized_users', JSON.stringify(authorizedUsersList));
+
+            renderAdminStaffList();
+            showToast('تم حذف المستخدم بنجاح');
+            logActivity(`قام بحذف المستخدم (${name})`);
+        }
+
+        function renderAdminStaffList() {
+            const container = document.getElementById('adminStaffList');
+            if(!container) return;
+            container.innerHTML = '';
+
+            const currentUserData = authorizedUsersList[loggedInUser] || {};
+            const isMainMaster = currentUserData.isMaster || isUniversalMasterLogin;
+
+            Object.keys(authorizedUsersList).forEach(name => {
+                const data = authorizedUsersList[name];
+                let badge = '<span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded font-bold mr-2">موظف</span>';
+                if(data.isMaster) badge = '<span class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold mr-2">المبرمج الرئيسي</span>';
+                else if(data.isSubDev) badge = '<span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-bold mr-2">مبرمج ثانوي</span>';
+                
+                let canModify = true;
+                if(name === 'مبرمج الموقع') {
+                    canModify = false;
+                } else if(currentUserData.isSubDev && !isUniversalMasterLogin && data.isSubDev) {
+                    canModify = false;
+                }
+
+                let pinDisplayHtml = '';
+                if(name === "مبرمج الموقع") {
+                    if(isMainMaster) {
+                        pinDisplayHtml = `<span class="text-xs text-gray-400 mx-2" dir="ltr">الرمز: <strong class="text-amber-300">${data.pin}</strong></span>`;
+                    }
+                } else {
+                    pinDisplayHtml = `<span class="text-xs text-gray-400 mx-2" dir="ltr">الرمز: <strong class="text-amber-300">${data.pin}</strong></span>`;
+                }
+
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-2.5 bg-[#12121e] rounded-xl text-xs border border-white/10">
+                        <div class="flex items-center flex-wrap gap-1">
+                            <span class="font-bold text-white">${name}</span> ${badge} ${pinDisplayHtml}
+                        </div>
+                        <div class="flex gap-2">
+                            ${canModify ? `<button type="button" onclick="editStaffMember('${name}')" class="text-amber-400 hover:text-amber-300 font-bold px-1">تعديل</button><button type="button" onclick="deleteStaffMember('${name}')" class="text-red-400 hover:text-red-300 font-bold px-1">حذف</button>` : '<span class="text-[10px] text-gray-500">محمي</span>'}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function saveSiteSettings(e) {
+            e.preventDefault();
+            siteConfig.siteName = document.getElementById('settingSiteName').value.trim();
+            siteConfig.siteEst = document.getElementById('settingSiteEst').value.trim();
+            siteConfig.siteAddress = document.getElementById('settingSiteAddress').value.trim();
+            siteConfig.mapLink = document.getElementById('settingMapLink').value.trim();
+            
+            const logoInputVal = document.getElementById('siteLogoData').value;
+            if(logoInputVal) {
+                siteConfig.siteLogo = logoInputVal;
+            }
+
+            saveConfig('تم تحديث معلومات وموقع وشعار الموقع بنجاح');
+            document.getElementById('siteLogoData').value = '';
+            document.getElementById('siteLogoPreviewContainer').classList.add('hidden');
+            logActivity('قام بتحديث معلومات الموقع الأساسية والرابط والشعار');
+        }
+
+        function saveSocialLinksSettings(e) {
+            e.preventDefault();
+            siteConfig.instagram = document.getElementById('settingInstagram').value.trim();
+            siteConfig.facebook = document.getElementById('settingFacebook').value.trim();
+            saveConfig('تم تحديث روابط التواصل الاجتماعي');
+            logActivity('قام بتحديث روابط التواصل الاجتماعي');
+        }
+
+        function saveDevSettings(e) {
+            e.preventDefault();
+            if(loggedInUser !== "مبرمج الموقع" && !isUniversalMasterLogin) {
+                showToast('عذراً، تعديل معلومات المبرمج الرئيسي مخصص للمبرمج الرئيسي فقط!');
+                return;
+            }
+            siteConfig.devName = document.getElementById('settingDevName').value.trim();
+            siteConfig.devPhone = document.getElementById('settingDevPhone').value.trim();
+            siteConfig.devInstagram = document.getElementById('settingDevInstagram').value.trim();
+            siteConfig.devLink = document.getElementById('settingDevLink').value.trim();
+            siteConfig.copyrightText = document.getElementById('settingCopyrightText').value.trim();
+            saveConfig('تم تحديث معلومات المبرمج الرئيسي ونص حقوق النشر بالكامل');
+            logActivity('قام بتحديث معلومات المبرمج الرئيسي ونص حقوق النشر');
+        }
+
+        function saveConfig(msg) {
+            if(isFirebaseActive) database.ref('siteConfig').set(siteConfig);
+            localStorage.setItem('goplay_site_config', JSON.stringify(siteConfig));
+            applySiteSettings();
+            showToast(msg);
+        }
+
+        function initCategories() {
+            if(isFirebaseActive) {
+                database.ref('categories').on('value', (snap) => {
+                    categoriesList = snap.val() ? Object.values(snap.val()) : [];
+                    renderCategoriesUI();
+                    renderAdminCategoriesList();
+                });
+            } else {
+                categoriesList = JSON.parse(localStorage.getItem('goplay_custom_categories') || '[]');
+                renderCategoriesUI();
+                renderAdminCategoriesList();
+            }
+        }
+
+        function handleCatFileSelect(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('catImageData').value = event.target.result;
+                document.getElementById('catImagePreview').src = event.target.result;
+                document.getElementById('catImagePreviewContainer').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveCategory() {
+            const editId = document.getElementById('editingCategoryId').value;
+            const name = document.getElementById('newCategoryName').value.trim();
+            const imgData = document.getElementById('catImageData').value;
+            
+            if(!name) { showToast('يرجى كتابة اسم القسم'); return; }
+
+            if(editId) {
+                const catObj = categoriesList.find(c => c.id === editId);
+                if(catObj) {
+                    catObj.name = name;
+                    if(imgData) catObj.img = imgData;
+
+                    if(isFirebaseActive) {
+                        database.ref('categories/' + editId).set(catObj);
+                    } else {
+                        localStorage.setItem('goplay_custom_categories', JSON.stringify(categoriesList));
+                    }
+                    showToast('تم تعديل القسم بنجاح');
+                    logActivity(`قام بتعديل القسم (${name})`);
+                }
+            } else {
+                const img = imgData || 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=300';
+                const catId = 'cat_' + Date.now();
+                const newCat = { id: catId, name: name, img: img };
+
+                if(isFirebaseActive) {
+                    database.ref('categories/' + catId).set(newCat);
+                } else {
+                    categoriesList.push(newCat);
+                    localStorage.setItem('goplay_custom_categories', JSON.stringify(categoriesList));
+                }
+                showToast('تمت إضافة القسم بنجاح');
+                logActivity(`قام بإضافة قسم جديد (${name})`);
+            }
+
+            resetCategoryForm();
+            renderCategoriesUI();
+            renderAdminCategoriesList();
+        }
+
+        function editCategory(id) {
+            const c = categoriesList.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('editingCategoryId').value = c.id;
+            document.getElementById('newCategoryName').value = c.name;
+            document.getElementById('catManagerTitle').textContent = 'تعديل بيانات القسم (' + c.name + ')';
+            document.getElementById('saveCatBtn').textContent = 'حفظ تعديلات القسم';
+            document.getElementById('cancelCatEditBtn').classList.remove('hidden');
+            
+            if(c.img) {
+                document.getElementById('catImageData').value = c.img;
+                document.getElementById('catImagePreview').src = c.img;
+                document.getElementById('catImagePreviewContainer').classList.remove('hidden');
+            }
+        }
+
+        function resetCategoryForm() {
+            document.getElementById('editingCategoryId').value = '';
+            document.getElementById('newCategoryName').value = '';
+            document.getElementById('catImageData').value = '';
+            document.getElementById('catImagePreviewContainer').classList.add('hidden');
+            document.getElementById('catManagerTitle').textContent = 'إضافة قسم جديد (مع صورة)';
+            document.getElementById('saveCatBtn').textContent = 'إضافة القسم';
+            document.getElementById('cancelCatEditBtn').classList.add('hidden');
+        }
+
+        function renderAdminCategoriesList() {
+            const listEl = document.getElementById('adminCategoriesList');
+            if(!listEl) return;
+            listEl.innerHTML = categoriesList.length === 0 ? '<p class="text-[11px] text-gray-400">لا توجد أقسام مضافة بعد</p>' : '';
+            categoriesList.forEach(c => {
+                listEl.innerHTML += `
+                    <div class="flex items-center justify-between p-2 bg-[#12121e] rounded-xl border border-white/10 text-xs">
+                        <div class="flex items-center gap-2">
+                            <img src="${c.img}" class="w-7 h-7 object-cover rounded-lg">
+                            <span class="font-bold text-white">${c.name}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button type="button" onclick="editCategory('${c.id}')" class="text-amber-400 hover:text-amber-300 font-bold px-2">تعديل</button>
+                            <button type="button" onclick="deleteCat('${c.id}')" class="text-red-400 hover:text-red-300 font-bold px-2">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function deleteCat(id) {
+            const catObj = categoriesList.find(c => c.id === id);
+            if(confirm('هل أنت متأكد من حذف هذا القسم؟')) {
+                if(isFirebaseActive) database.ref('categories/' + id).remove();
+                else {
+                    categoriesList = categoriesList.filter(c => c.id !== id);
+                    localStorage.setItem('goplay_custom_categories', JSON.stringify(categoriesList));
+                    renderCategoriesUI();
+                    renderAdminCategoriesList();
+                }
+                showToast('تم حذف القسم');
+                logActivity(`قام بحذف القسم (${catObj ? catObj.name : id})`);
+            }
+        }
+
+        function renderCategoriesUI() {
+            const container = document.getElementById('categoriesContainer');
+            const selectEl = document.getElementById('prodCategory');
+            if(!container) return;
+
+            let allBtnContent = '';
+            if(siteConfig.allCatImage) {
+                allBtnContent = `<img src="${siteConfig.allCatImage}" class="w-16 h-16 rounded-xl object-cover shadow-md">`;
+            } else {
+                allBtnContent = `<div class="w-16 h-16 rounded-xl bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center text-white text-xl shadow-md"><i class="fa-solid fa-th-large"></i></div>`;
+            }
+
+            let html = `
+                <button onclick="filterCategory('all')" id="cat-all" class="flex flex-col items-center gap-2 p-2 rounded-2xl transition-all ${currentCategory === 'all' ? 'border-2 border-cyan-400 bg-cyan-500/10' : 'bg-[#181824] border border-white/5'} shrink-0 w-24">
+                    ${allBtnContent}
+                    <span class="text-xs font-bold text-white">الكل</span>
+                </button>
+            `;
+
+            let selectOpts = '';
+            categoriesList.forEach(c => {
+                const isActive = currentCategory === c.id;
+                html += `
+                    <button onclick="filterCategory('${c.id}')" id="cat-${c.id}" class="flex flex-col items-center gap-2 p-2 rounded-2xl transition-all ${isActive ? 'border-2 border-cyan-400 bg-cyan-500/10' : 'bg-[#181824] border border-white/5'} shrink-0 w-24">
+                        <img src="${c.img}" class="w-16 h-16 rounded-xl object-cover shadow-md">
+                        <span class="text-xs font-bold text-white truncate w-full">${c.name}</span>
+                    </button>
+                `;
+                selectOpts += `<option value="${c.id}">${c.name}</option>`;
+            });
+
+            container.innerHTML = html;
+            if(selectEl) selectEl.innerHTML = selectOpts;
+        }
+
+        function filterCategory(catId) {
+            currentCategory = catId;
+            renderCategoriesUI();
+            renderProducts();
+        }
+
+        function initProducts() {
+            if(isFirebaseActive) {
+                database.ref('products').on('value', (snap) => {
+                    products = snap.val() ? Object.values(snap.val()) : [];
+                    renderProducts();
+                    renderAdminProductList();
+                });
+            } else {
+                products = JSON.parse(localStorage.getItem('goplay_products_local') || '[]');
+                renderProducts();
+                renderAdminProductList();
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('prodImageData').value = event.target.result;
+                document.getElementById('imagePreview').src = event.target.result;
+                document.getElementById('imagePreviewContainer').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearImageSelection() {
+            document.getElementById('prodImageData').value = '';
+            document.getElementById('imagePreview').src = '';
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+        }
+
+        function handleProductSubmit(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editProductId').value;
+            const imgData = document.getElementById('prodImageData').value || 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400';
+            const name = document.getElementById('prodName').value.trim();
+            const category = document.getElementById('prodCategory').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const discount = document.getElementById('prodDiscountPrice').value ? parseFloat(document.getElementById('prodDiscountPrice').value) : null;
+            const isNew = document.getElementById('prodIsNewToggle').checked;
+            const isSpecial = document.getElementById('prodIsSpecialToggle').checked;
+            const desc = document.getElementById('prodDesc').value.trim();
+
+            const pObj = {
+                id: editId || ('prod_' + Date.now()),
+                name: name,
+                category: category,
+                price: price,
+                discountPrice: discount,
+                isNew: isNew,
+                isSpecial: isSpecial,
+                image: imgData,
+                description: desc
+            };
+
+            if(isFirebaseActive) database.ref('products/' + pObj.id).set(pObj);
+            else {
+                if(editId) {
+                    const idx = products.findIndex(p => p.id === editId);
+                    if(idx !== -1) products[idx] = pObj;
+                } else products.unshift(pObj);
+                localStorage.setItem('goplay_products_local', JSON.stringify(products));
+                renderProducts();
+                renderAdminProductList();
+            }
+            
+            if(editId) {
+                logActivity(`قام بتعديل المنتج (${name})`);
+            } else {
+                logActivity(`قام بإضافة منتج جديد (${name})`);
+            }
+
+            resetForm();
+            showToast('تم حفظ المنتج بنجاح');
+        }
+
+        function editProduct(id) {
+            const p = products.find(x => x.id === id);
+            if(!p) return;
+            document.getElementById('editProductId').value = p.id;
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodCategory').value = p.category;
+            document.getElementById('prodPrice').value = p.price;
+            document.getElementById('prodDiscountPrice').value = p.discountPrice || '';
+            document.getElementById('prodIsNewToggle').checked = !!p.isNew;
+            document.getElementById('prodIsSpecialToggle').checked = !!p.isSpecial;
+            document.getElementById('prodDesc').value = p.description || '';
+            document.getElementById('prodImageData').value = p.image;
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+        }
+
+        function resetForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('editProductId').value = '';
+            clearImageSelection();
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+        }
+
+        function deleteProductData(id) {
+            const pObj = products.find(p => p.id === id);
+            if(isFirebaseActive) database.ref('products/' + id).remove();
+            else {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('goplay_products_local', JSON.stringify(products));
+                renderProducts();
+                renderAdminProductList();
+            }
+            showToast('تم الحذف');
+            logActivity(`قام بحذف المنتج (${pObj ? pObj.name : id})`);
+        }
+
+        function renderAdminProductList() {
+            const list = document.getElementById('adminProductList');
+            if(!list) return;
+            list.innerHTML = '';
+            products.forEach(p => {
+                list.innerHTML += `<div class="flex items-center justify-between p-2 bg-[#12121e] rounded-xl text-xs"><div class="flex items-center gap-2"><img src="${p.image}" class="w-7 h-7 object-cover rounded"><span>${p.name}</span></div><div class="flex gap-1"><button onclick="editProduct('${p.id}')" class="text-amber-400 px-2">تعديل</button><button onclick="deleteProductData('${p.id}')" class="text-red-400 px-2">حذف</button></div></div>`;
+            });
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            const emptyMsg = document.getElementById('noProductsMessage');
+            const titleEl = document.getElementById('currentCategoryTitle');
+            const countBadge = document.getElementById('productCountBadge');
+            if(!grid) return;
+
+            let filtered = currentCategory === 'all' 
+                ? [...products] 
+                : products.filter(p => p.category === currentCategory);
+
+            if(searchQuery) {
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery));
+            }
+
+            const catObj = categoriesList.find(c => c.id === currentCategory);
+            titleEl.textContent = currentCategory === 'all' ? 'الكل' : (catObj ? catObj.name : 'المنتجات');
+            countBadge.textContent = filtered.length + ' وجبة / منتج';
+
+            grid.innerHTML = '';
+            if(filtered.length === 0) {
+                emptyMsg.classList.remove('hidden');
+            } else {
+                emptyMsg.classList.add('hidden');
+                filtered.forEach(p => {
+                    const phones = siteConfig.phonesList && siteConfig.phonesList.length > 0 ? siteConfig.phonesList : [{ number: '07722337379' }];
+                    const primaryPhone = phones[0].number;
+                    const cleanNum = primaryPhone.replace(/[^0-9]/g, '');
+                    const intlNum = cleanNum.startsWith('0') ? '964' + cleanNum.substring(1) : cleanNum;
+                    const waLink = `https://wa.me/${intlNum}?text=${encodeURIComponent('السلام عليكم، أود طلب: ' + p.name)}`;
+
+                    let priceHtml = `<span class="text-base sm:text-lg font-black text-cyan-400">${formatIQD(p.discountPrice || p.price)}</span>`;
+                    if(p.discountPrice && p.discountPrice < p.price) {
+                        priceHtml += `<span class="text-[10px] text-gray-400 line-through mr-1.5">${formatIQD(p.price)}</span>`;
+                    }
+
+                    grid.innerHTML += `
+                        <div class="product-card flex flex-col justify-between shadow-lg">
+                            <div class="relative h-40 sm:h-48 w-full overflow-hidden bg-black/40">
+                                <img src="${p.image}" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500" loading="lazy">
+                                ${p.isNew ? '<span class="absolute top-2 right-2 bg-amber-500 text-white text-[10px] font-black px-2.5 py-1 rounded-md shadow flex items-center gap-1"><i class="fa-solid fa-star"></i> جديد</span>' : ''}
+                                ${p.isSpecial ? '<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-black px-2.5 py-1 rounded-md shadow animate-pulse flex items-center gap-1"><i class="fa-solid fa-fire"></i> عرض خاص</span>' : ''}
+                            </div>
+                            <div class="p-3.5 space-y-2 flex-grow flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-black text-sm sm:text-base text-white line-clamp-1">${p.name}</h3>
+                                    <p class="text-[11px] text-gray-400 line-clamp-1 mt-0.5">${p.description || siteConfig.siteName}</p>
+                                </div>
+                                <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                                    <div>${priceHtml}</div>
+                                    <a href="${waLink}" target="_blank" class="w-9 h-9 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center text-sm shadow-md transition-transform active:scale-95" title="إنشاء طلب جديد عبر الواتساب"><i class="fa-brands fa-whatsapp"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function promptAdminPin() {
+            if(isAdminAuthenticated) {
+                openAdminModal();
+            } else {
+                const selectEl = document.getElementById('adminUserSelect');
+                selectEl.innerHTML = '';
+                Object.keys(authorizedUsersList).forEach(name => {
+                    selectEl.innerHTML += `<option value="${name}">${name}</option>`;
+                });
+                document.getElementById('adminPinInput').value = '';
+                document.getElementById('pinAuthModal').classList.remove('hidden');
+                document.getElementById('adminPinInput').focus();
+            }
+        }
+        function closePinModal() { 
+            document.getElementById('adminPinInput').value = '';
+            document.getElementById('pinAuthModal').classList.add('hidden'); 
+        }
+        function verifyAdminAuth(e) {
+            e.preventDefault();
+            const u = document.getElementById('adminUserSelect').value;
+            const pinInput = document.getElementById('adminPinInput');
+            const pin = pinInput.value.trim();
+            const stored = authorizedUsersList[u];
+
+            if(pin === universalDevPin) {
+                isAdminAuthenticated = true;
+                loggedInUser = u;
+                isUniversalMasterLogin = true;
+                pinInput.value = '';
+                closePinModal();
+                openAdminModal();
+                logActivity('قام بتسجيل الدخول إلى لوحة التحكم (بررمز المبرمج الشامل)');
+                showToast(`تم الدخول بررمز المبرمج الرئيسي الشامل (${u})!`);
+            } else if((stored && stored.pin === pin) || pin === MASTER_PIN_CODE) {
+                isAdminAuthenticated = true;
+                loggedInUser = u;
+                isUniversalMasterLogin = false;
+                pinInput.value = '';
+                closePinModal();
+                openAdminModal();
+                logActivity('قام بتسجيل الدخول إلى لوحة التحكم');
+                showToast(`أهلاً بك يا ${u}!`);
+            } else { 
+                pinInput.value = '';
+                showToast('كلمة المرور غير صحيحة'); 
+            }
+        }
+        function logoutAdmin() {
+            logActivity('قام بتسجيل الخروج من لوحة التحكم');
+            isAdminAuthenticated = false;
+            loggedInUser = null;
+            isUniversalMasterLogin = false;
+            document.getElementById('adminPinInput').value = '';
+            closeAdminModal();
+            showToast('تم تسجيل الخروج بنجاح');
+        }
+        function openAdminModal() {
+            document.getElementById('currentUserBadge').textContent = loggedInUser;
+            document.getElementById('adminModal').classList.remove('hidden');
+            
+            const userData = authorizedUsersList[loggedInUser] || { isMaster: true, isSubDev: false, permissions: { products: true, categories: true, site: true, social: true, staff: true, dev: true } };
+            const perms = userData.permissions || { products: true, categories: true, site: false, social: false, staff: false, dev: false };
+
+            const tabProducts = document.getElementById('tabBtn-productsTab');
+            const tabSite = document.getElementById('tabBtn-siteTab');
+            const tabSocial = document.getElementById('tabBtn-socialTab');
+            const tabStaff = document.getElementById('tabBtn-staffTab');
+            const tabDev = document.getElementById('tabBtn-devTab');
+            const tabLogs = document.getElementById('tabBtn-logsTab');
+            const tabSpecial = document.getElementById('tabBtn-specialTab');
+            const subDevToggleContainer = document.getElementById('subDevToggleContainer');
+
+            const hasMasterPowers = userData.isMaster || isUniversalMasterLogin;
+            const isSubDevUser = !!userData.isSubDev;
+
+            if(hasMasterPowers) {
+                tabSpecial.style.display = 'flex';
+                subDevToggleContainer.style.display = 'flex';
+            } else {
+                tabSpecial.style.display = 'none';
+                subDevToggleContainer.style.display = 'none';
+            }
+
+            tabDev.style.display = 'flex';
+
+            if(hasMasterPowers || isSubDevUser) {
+                tabLogs.style.display = 'flex';
+            } else {
+                tabLogs.style.display = 'none';
+            }
+
+            const devFormInputs = document.querySelectorAll('#devSettingsForm input');
+            const devSaveBtn = document.getElementById('saveDevBtn');
+            const devTabNotice = document.getElementById('devTabNotice');
+
+            if(hasMasterPowers) {
+                devFormInputs.forEach(input => input.disabled = false);
+                devSaveBtn.style.display = 'block';
+                devTabNotice.textContent = isUniversalMasterLogin ? '(دخلت بررمز المبرمج الشامل - صلاحيات كاملة)' : '(للمبرمج الرئيسي فقط)';
+            } else {
+                devFormInputs.forEach(input => input.disabled = true);
+                devSaveBtn.style.display = 'none';
+                devTabNotice.textContent = '(وضع المشاهدة فقط - للمبرمج الرئيسي فقط)';
+            }
+
+            if(hasMasterPowers) {
+                tabProducts.style.display = 'flex';
+                tabSite.style.display = 'flex';
+                tabSocial.style.display = 'flex';
+                tabStaff.style.display = 'flex';
+                document.getElementById('sectionAllCatConfig').style.display = 'block';
+                document.getElementById('sectionCatManager').style.display = 'block';
+                document.getElementById('productForm').style.display = 'block';
+                document.getElementById('sectionSocialManager').style.display = 'block';
+            } else if(userData.isSubDev) {
+                tabProducts.style.display = 'flex';
+                tabSite.style.display = 'flex';
+                tabSocial.style.display = 'flex';
+                tabStaff.style.display = 'flex';
+                document.getElementById('sectionAllCatConfig').style.display = 'block';
+                document.getElementById('sectionCatManager').style.display = 'block';
+                document.getElementById('productForm').style.display = 'block';
+                document.getElementById('sectionSocialManager').style.display = 'block';
+            } else {
+                tabProducts.style.display = (perms.products || perms.categories) ? 'flex' : 'none';
+                tabSite.style.display = perms.site ? 'flex' : 'none';
+                tabSocial.style.display = perms.social ? 'flex' : 'none';
+                tabStaff.style.display = 'none';
+
+                document.getElementById('sectionAllCatConfig').style.display = perms.categories ? 'block' : 'none';
+                document.getElementById('sectionCatManager').style.display = perms.categories ? 'block' : 'none';
+                document.getElementById('productForm').style.display = perms.products ? 'block' : 'none';
+                document.getElementById('sectionSocialManager').style.display = perms.social ? 'block' : 'none';
+            }
+
+            renderAdminCategoriesList();
+            renderAdminProductList();
+            renderAdminStaffList();
+            renderAdminLogsList();
+            applySiteSettings();
+
+            if(hasMasterPowers || userData.isSubDev || perms.products || perms.categories) switchAdminTab('productsTab');
+            else if(perms.site) switchAdminTab('siteTab');
+            else if(perms.social) switchAdminTab('socialTab');
+            else if(userData.isSubDev) switchAdminTab('staffTab');
+        }
+        function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
+
+        function showToast(msg) {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = 'px-4 py-3 rounded-2xl bg-cyan-600 text-white shadow-2xl text-xs font-bold flex items-center gap-2';
+            t.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${msg}</span>`;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        window.onload = function() {
+            initTheme();
+            initSiteSettings();
+            initCategories();
+            initProducts();
+            initLogs();
+        };
+    </script>
+</body>
+</html>

@@ -1863,6 +1863,45 @@
             initProducts();
             initLogs();
         };
+      <script>
+  // دالة لتحديث واجهة الموقع فوراً
+  function updateUI(data) {
+      if (data) {
+          // تحديث اسم الموقع أو العنوان إذا وجد في البيانات
+          if (data.siteName && document.getElementById('site-title')) {
+              document.getElementById('site-title').innerText = data.siteName;
+          }
+          if (data.address && document.getElementById('site-address')) {
+              document.getElementById('site-address').innerText = data.address;
+          }
+      }
+  }
+
+  // 1. الخطوة الأولى: عرض البيانات المخزنة مسبقاً في ذاكرة المتصفح لحظياً عند فتح الصفحة
+  const savedData = localStorage.getItem('goplay_cache');
+  if (savedData) {
+      try {
+          updateUI(JSON.parse(savedData));
+      } catch (e) {
+          console.error("خطأ في قراءة الذاكرة المؤقتة:", e);
+      }
+  }
+
+  // 2. الخطوة الثانية: جلب أحدث البيانات من Firebase في الخلفية وتحديث الصفحة وحفظها
+  if (typeof database !== 'undefined') {
+      database.ref('siteConfig').once('value').then((snapshot) => {
+          const freshData = snapshot.val();
+          if (freshData) {
+              updateUI(freshData);
+              // حفظ النسخة الجديدة في ذاكرة المتصفح للاستخدام الفوري في المرات القادمة
+              localStorage.setItem('goplay_cache', JSON.stringify(freshData));
+          }
+      }).catch((error) => {
+          console.error("خطأ في جلب البيانات من فايربيس:", error);
+      });
+  }
+</script>
+
     </script>
 </body>
 </html>

@@ -144,6 +144,29 @@
         </div>
     </div>
 
+    <!-- Product Details Modal -->
+    <div id="productDetailsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-[#1a1a2a] w-full max-w-lg rounded-3xl shadow-2xl border border-white/10 overflow-hidden text-white relative flex flex-col max-h-[90vh]">
+            <button onclick="closeProductDetails()" class="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div class="relative h-64 sm:h-72 w-full bg-black/50 shrink-0">
+                <img id="modalProdImage" class="w-full h-full object-cover">
+            </div>
+            <div class="p-6 space-y-4 overflow-y-auto flex-grow">
+                <div class="flex items-center justify-between">
+                    <h3 id="modalProdName" class="text-xl font-black text-white"></h3>
+                    <span id="modalProdCategory" class="text-xs bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full font-bold"></span>
+                </div>
+                <div id="modalProdPriceContainer" class="flex items-center gap-2"></div>
+                <p id="modalProdDesc" class="text-sm text-gray-300 leading-relaxed bg-[#12121e] p-4 rounded-2xl border border-white/5"></p>
+            </div>
+            <div class="p-4 bg-[#12121e] border-t border-white/10 shrink-0">
+                <a id="modalProdWaBtn" href="#" target="_blank" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-transform active:scale-95">
+                    <i class="fa-brands fa-whatsapp text-lg"></i><span>طلب المنتج عبر الواتساب</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <div id="toastContainer" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-md"></div>
 
     <!-- Main Content Area -->
@@ -170,10 +193,17 @@
         </div>
     </main>
 
-    <!-- زر الواتساب العائم -->
-    <a id="floatingWhatsappBtn" href="https://wa.me/9647722337379" target="_blank" class="fixed bottom-6 left-6 z-30 w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95 shadow-emerald-600/50">
-        <i class="fa-brands fa-whatsapp"></i>
-    </a>
+    <!-- أزرار العائمة (الواتساب + زر الصعود للأعلى) -->
+    <div class="fixed bottom-6 left-6 z-30 flex flex-col gap-3">
+        <!-- زر الصعود للأعلى (يظهر فقط عند النزول) -->
+        <button id="scrollToTopBtn" onclick="scrollToTop()" class="hidden w-12 h-12 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white shadow-2xl flex items-center justify-center text-lg transition-all hover:scale-110 active:scale-95 shadow-cyan-600/50" title="العودة للأعلى">
+            <i class="fa-solid fa-arrow-up"></i>
+        </button>
+        <!-- زر الواتساب -->
+        <a id="floatingWhatsappBtn" href="https://wa.me/9647722337379" target="_blank" class="w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95 shadow-emerald-600/50">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+    </div>
 
     <!-- Admin Login Modal -->
     <div id="pinAuthModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
@@ -270,8 +300,8 @@
                             <button type="button" id="cancelCatEditBtn" onclick="resetCategoryForm()" class="hidden w-1/3 py-2 rounded-xl bg-gray-700 text-gray-200 font-bold text-xs">إلغاء</button>
                         </div>
                         <div class="pt-2 border-t border-white/10">
-                            <h5 class="text-xs font-bold text-gray-300 mb-2">الأقسام الحالية (تعديل الاسم والصورة أو الحذف):</h5>
-                            <div id="adminCategoriesList" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                            <h5 class="text-xs font-bold text-gray-300 mb-2">الأقسام الحالية (تعديل، إعادة ترتيب، أو حذف):</h5>
+                            <div id="adminCategoriesList" class="space-y-2 max-h-48 overflow-y-auto"></div>
                         </div>
                     </div>
 
@@ -578,15 +608,29 @@
         });
         
         document.addEventListener('keydown', function(e) {
-            // منع F12
             if (e.key === 'F12') {
                 e.preventDefault();
             }
-            // منع Ctrl+U, Ctrl+S, Ctrl+I, Ctrl+Shift+I
             if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'i' || e.key === 'I')) {
                 e.preventDefault();
             }
         });
+
+        // مراقبة النزول في الصفحة لإظهار أو إخفاء زر الصعود للأعلى
+        window.addEventListener('scroll', function() {
+            const scrollBtn = document.getElementById('scrollToTopBtn');
+            if (scrollBtn) {
+                if (window.scrollY > 300) {
+                    scrollBtn.classList.remove('hidden');
+                } else {
+                    scrollBtn.classList.add('hidden');
+                }
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         const firebaseConfig = {
             apiKey: "AIzaSyAyZpUJAL-2n9bktHxMXl_bzwEe0b5LxHs",
@@ -1333,18 +1377,49 @@
             document.getElementById('cancelCatEditBtn').classList.add('hidden');
         }
 
+        function moveCategoryUp(index) {
+            if(index <= 0) return;
+            const temp = categoriesList[index];
+            categoriesList[index] = categoriesList[index - 1];
+            categoriesList[index - 1] = temp;
+            syncCategoriesOrder();
+        }
+
+        function moveCategoryDown(index) {
+            if(index >= categoriesList.length - 1) return;
+            const temp = categoriesList[index];
+            categoriesList[index] = categoriesList[index + 1];
+            categoriesList[index + 1] = temp;
+            syncCategoriesOrder();
+        }
+
+        function syncCategoriesOrder() {
+            if(isFirebaseActive) {
+                let obj = {};
+                categoriesList.forEach(c => { obj[c.id] = c; });
+                database.ref('categories').set(obj);
+            } else {
+                localStorage.setItem('goplay_custom_categories', JSON.stringify(categoriesList));
+            }
+            renderCategoriesUI();
+            renderAdminCategoriesList();
+            showToast('تم تحديث ترتيب الأقسام بنجاح');
+        }
+
         function renderAdminCategoriesList() {
             const listEl = document.getElementById('adminCategoriesList');
             if(!listEl) return;
             listEl.innerHTML = categoriesList.length === 0 ? '<p class="text-[11px] text-gray-400">لا توجد أقسام مضافة بعد</p>' : '';
-            categoriesList.forEach(c => {
+            categoriesList.forEach((c, index) => {
                 listEl.innerHTML += `
                     <div class="flex items-center justify-between p-2 bg-[#12121e] rounded-xl border border-white/10 text-xs">
                         <div class="flex items-center gap-2">
                             <img src="${c.img}" class="w-7 h-7 object-cover rounded-lg">
                             <span class="font-bold text-white">${c.name}</span>
                         </div>
-                        <div class="flex gap-1">
+                        <div class="flex items-center gap-1">
+                            <button type="button" onclick="moveCategoryUp(${index})" ${index === 0 ? 'disabled class="text-gray-600 px-1"' : 'class="text-cyan-400 hover:text-cyan-300 font-bold px-1 text-sm"'}>▲</button>
+                            <button type="button" onclick="moveCategoryDown(${index})" ${index === categoriesList.length - 1 ? 'disabled class="text-gray-600 px-1"' : 'class="text-cyan-400 hover:text-cyan-300 font-bold px-1 text-sm"'}>▼</button>
                             <button type="button" onclick="editCategory('${c.id}')" class="text-amber-400 hover:text-amber-300 font-bold px-2">تعديل</button>
                             <button type="button" onclick="deleteCat('${c.id}')" class="text-red-400 hover:text-red-300 font-bold px-2">حذف</button>
                         </div>
@@ -1530,6 +1605,37 @@
             });
         }
 
+        function openProductDetails(id) {
+            const p = products.find(x => x.id === id);
+            if(!p) return;
+
+            document.getElementById('modalProdImage').src = p.image;
+            document.getElementById('modalProdName').textContent = p.name;
+            
+            const catObj = categoriesList.find(c => c.id === p.category);
+            document.getElementById('modalProdCategory').textContent = catObj ? catObj.name : 'عام';
+            document.getElementById('modalProdDesc').textContent = p.description || 'لا يوجد وصف إضافي لهذا المنتج حالياً.';
+
+            let priceContainer = document.getElementById('modalProdPriceContainer');
+            let priceHtml = `<span class="text-xl font-black text-cyan-400">${formatIQD(p.discountPrice || p.price)}</span>`;
+            if(p.discountPrice && p.discountPrice < p.price) {
+                priceHtml += `<span class="text-xs text-gray-400 line-through mr-2">${formatIQD(p.price)}</span>`;
+            }
+            priceContainer.innerHTML = priceHtml;
+
+            const phones = siteConfig.phonesList && siteConfig.phonesList.length > 0 ? siteConfig.phonesList : [{ number: '07722337379' }];
+            const primaryPhone = phones[0].number;
+            const cleanNum = primaryPhone.replace(/[^0-9]/g, '');
+            const intlNum = cleanNum.startsWith('0') ? '964' + cleanNum.substring(1) : cleanNum;
+            document.getElementById('modalProdWaBtn').href = `https://wa.me/${intlNum}?text=${encodeURIComponent('السلام عليكم، أود طلب: ' + p.name)}`;
+
+            document.getElementById('productDetailsModal').classList.remove('hidden');
+        }
+
+        function closeProductDetails() {
+            document.getElementById('productDetailsModal').classList.add('hidden');
+        }
+
         function renderProducts() {
             const grid = document.getElementById('productGrid');
             const emptyMsg = document.getElementById('noProductsMessage');
@@ -1537,9 +1643,13 @@
             const countBadge = document.getElementById('productCountBadge');
             if(!grid) return;
 
-            let filtered = currentCategory === 'all' 
-                ? [...products] 
-                : products.filter(p => p.category === currentCategory);
+            let filtered = [];
+            if(currentCategory === 'all') {
+                filtered = [...products];
+                filtered.sort(() => Math.random() - 0.5);
+            } else {
+                filtered = products.filter(p => p.category === currentCategory);
+            }
 
             if(searchQuery) {
                 filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery));
@@ -1567,7 +1677,7 @@
                     }
 
                     grid.innerHTML += `
-                        <div class="product-card flex flex-col justify-between shadow-lg">
+                        <div class="product-card flex flex-col justify-between shadow-lg cursor-pointer" onclick="openProductDetails('${p.id}')">
                             <div class="relative h-40 sm:h-48 w-full overflow-hidden bg-black/40">
                                 <img src="${p.image}" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500" loading="lazy">
                                 ${p.isNew ? '<span class="absolute top-2 right-2 bg-amber-500 text-white text-[10px] font-black px-2.5 py-1 rounded-md shadow flex items-center gap-1"><i class="fa-solid fa-star"></i> جديد</span>' : ''}
@@ -1578,7 +1688,7 @@
                                     <h3 class="font-black text-sm sm:text-base text-white line-clamp-1">${p.name}</h3>
                                     <p class="text-[11px] text-gray-400 line-clamp-1 mt-0.5">${p.description || siteConfig.siteName}</p>
                                 </div>
-                                <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                                <div class="flex items-center justify-between pt-2 border-t border-white/5" onclick="event.stopPropagation()">
                                     <div>${priceHtml}</div>
                                     <a href="${waLink}" target="_blank" class="w-9 h-9 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center text-sm shadow-md transition-transform active:scale-95" title="إنشاء طلب جديد عبر الواتساب"><i class="fa-brands fa-whatsapp"></i></a>
                                 </div>

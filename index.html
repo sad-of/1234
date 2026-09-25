@@ -572,6 +572,22 @@
     </footer>
 
     <script>
+        // كود حماية وتعطيل الزر الأيمن والاختصارات
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            // منع F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+            // منع Ctrl+U, Ctrl+S, Ctrl+I, Ctrl+Shift+I
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'i' || e.key === 'I')) {
+                e.preventDefault();
+            }
+        });
+
         const firebaseConfig = {
             apiKey: "AIzaSyAyZpUJAL-2n9bktHxMXl_bzwEe0b5LxHs",
             authDomain: "goplay-bf4bb.firebaseapp.com",
@@ -963,7 +979,7 @@
             const userData = authorizedUsersList[loggedInUser] || {};
             const hasMasterOrSub = userData.isMaster || userData.isSubDev || isUniversalMasterLogin;
             if(!hasMasterOrSub) {
-                showToast('عذراً، حذف أرقام الواتساب مخصص للمبرمج الرئيسي والمبرمج الثانوي فقط!');
+                showToast('عذراً، حذف أرقام الواتساب مخصصة للمبرمج الرئيسي والمبرمج الثانوي فقط!');
                 return;
             }
 

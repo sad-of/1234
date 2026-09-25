@@ -1,23 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" class="dark">
 <head>
- // منع النقر بالزر الأيمن
-document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-    alert('عذراً، محتويات هذه الصفحة محمية!');
-});
-
-// منع اختصارات لوحة المفاتيح الشهيرة
-document.addEventListener('keydown', function(e) {
-    // منع F12
-    if (e.key === 'F12') {
-        e.preventDefault();
-    }
-    // منع Ctrl+U أو Ctrl+Shift+I أو Ctrl+S
-    if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'i' || e.key === 'I')) {
-        e.preventDefault();
-    }
-});   <meta charset="UTF-8">
+  <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title id="pageTitle">Go play Gaming | بابل - المسيب - حي المعلمين</title>
     
